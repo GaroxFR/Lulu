@@ -1,0 +1,12 @@
+{
+    "name": "play",
+    "description": "Ajouter une musique à la queue et démarrer la lecture",
+    "options": [
+        {
+            "name": "musique",
+            "description": "Lien vers la musique ou recherche youtube",
+            "type": 3,
+            "required": true
+        }
+    ]
+}
