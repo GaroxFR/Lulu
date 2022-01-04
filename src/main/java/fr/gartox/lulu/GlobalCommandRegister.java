@@ -23,7 +23,6 @@ public class GlobalCommandRegister implements ApplicationRunner {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private final RestClient client;
-    private final long GUILD_ID = 832025499772911706L;
 
     public GlobalCommandRegister(RestClient client) {
         this.client = client;
@@ -36,7 +35,7 @@ public class GlobalCommandRegister implements ApplicationRunner {
         final long applicationId = this.client.getApplicationId().block();
 
         Map<String, ApplicationCommandData> discordCommands = this.client.getApplicationService()
-                .getGuildApplicationCommands(applicationId, this.GUILD_ID)
+                .getGlobalApplicationCommands(applicationId)
                 .collectMap(ApplicationCommandData::name)
                 .switchIfEmpty(Mono.just(new HashMap<>()))
                 .block();
@@ -47,7 +46,7 @@ public class GlobalCommandRegister implements ApplicationRunner {
             commands.put(request.name(), request);
 
             if (!discordCommands.containsKey(request.name())) {
-                this.client.getApplicationService().createGuildApplicationCommand(applicationId, this.GUILD_ID, request).block();
+                this.client.getApplicationService().createGlobalApplicationCommand(applicationId, request).block();
 
                 this.LOGGER.info("Created global command: " + request.name());
             }
@@ -60,14 +59,14 @@ public class GlobalCommandRegister implements ApplicationRunner {
 
             if (command == null) {
                 //Removed command.json, delete global command
-                this.client.getApplicationService().deleteGuildApplicationCommand(applicationId,this.GUILD_ID, discordCommandId).block();
+                this.client.getApplicationService().deleteGlobalApplicationCommand(applicationId, discordCommandId).block();
 
                 this.LOGGER.info("Deleted global command: " + discordCommand.name());
                 continue; //Skip further processing on this command.
             }
 
             if (this.hasChanged(discordCommand, command)) {
-                this.client.getApplicationService().modifyGuildApplicationCommand(applicationId, this.GUILD_ID,discordCommandId, command).block();
+                this.client.getApplicationService().modifyGlobalApplicationCommand(applicationId,discordCommandId, command).block();
 
                 this.LOGGER.info("Updated global command: " + command.name());
             }
