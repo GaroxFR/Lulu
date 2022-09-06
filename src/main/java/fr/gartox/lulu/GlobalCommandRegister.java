@@ -53,7 +53,7 @@ public class GlobalCommandRegister implements ApplicationRunner {
         }
 
         for (ApplicationCommandData discordCommand : discordCommands.values()) {
-            long discordCommandId = Long.parseLong(discordCommand.id());
+            long discordCommandId = discordCommand.id().asLong();
 
             ApplicationCommandRequest command = commands.get(discordCommand.name());
 
